@@ -2,7 +2,9 @@
 //#include "Segment.h"
 
 using namespace std;
-int PathCount =0;
+extern int PathCount;
+extern int FrPathCount;
+extern int TjPathCount;
 extern vector <cCircuit> vModule_list;
 
 double StdDeviation(vector <cGate*> vPathStack, double Avg, int n, int Option){ // Option 0 is area, 1 is fin, 2 is fout, 3 is signal probability
@@ -73,9 +75,13 @@ void OutputtoFile(string OutFileName, vector <cGate*> vPathStack, int iPathGateC
     }
     if( vPathStack[i]->sName.find("Trojan") != string::npos && TjFlag == false ){
       TjFlag = true;
+      TjPathCount++;
     }
   }
 
+  if( TjFlag == false ){
+    FrPathCount++;
+  }
   fprintf(fptr," ");//space
   fprintf(fptr,"%d %d %1.5f %1.5f %5.5f %2.5f %1.5f %d %d %d %2.5f %1.5f %d %d %d %2.5f %1.5f %1.5f %1.5f %5.5f %2.5f %1.5f %1.5f %1.5f %5.5f %2.5f %1.5f\n",
     iPathGateCount, TjFlag, dMaxArea, dMinArea, dSumArea, dAvgArea, dStdArea, iMaxFin, iMinFin, iSumFin, dAvgFin, dStdFin,
@@ -215,7 +221,6 @@ void FindPath(string OutFileName){
     }
     //cout<<"PI to FF total: "<<PathCount<<endl;
 
-    PathCount=0;
     cGate *Gptr = vModule_list[i].Gate_list_head.pNext;
     while( Gptr != NULL ){ //from FF to PO
       if( Gptr->sFootprint == "SDFF"){

@@ -7,6 +7,9 @@ using namespace std;
 vector <cCircuit> vModule_list;
 cLib_Cell LibHead;
 vector<cGate*> Topological_list;
+int PathCount =0;
+int FrPathCount =0;
+int TjPathCount =0;
 
 int main(int argc, char* argv[] )
 {
@@ -25,15 +28,18 @@ int main(int argc, char* argv[] )
 	cout<<"Reading Circuit Finish."<<endl;
 
 
-	int i=0;
+	int i=0, j=0;
 	cGate *gptr = &vModule_list[vModule_list.size()-1].Gate_list_head;
 	while( gptr->pNext != NULL ){
 		//cout<<"Gate Name: "<<gptr->sName<<endl;
 		gptr = gptr->pNext;
 		i++;
+		if( gptr->sFootprint == "SDFF"){
+			j++;
+		}
 	}
 	cout<<"Gate count: "<<i<<endl;
-
+	cout<<"FlipFlop count: "<<j<<endl;
 
 	cout<<"Find TPLG Order....."<<endl;
 	for(int i=0 ; i < vModule_list.size()  ; i++){
@@ -63,7 +69,9 @@ int main(int argc, char* argv[] )
 	OutFileName += "_path_feature.txt";
 	FindPath(OutFileName);
  	cout<<"Finish Find Each Features of Every Path....."<<endl;
-
+	cout<<"Path count: "<<PathCount<<endl;
+	cout<<"Free path count: "<<FrPathCount<<endl;
+	cout<<"Trojan path count: "<<TjPathCount<<endl;
 	finish = clock();
 	cout<<(finish-start)/CLOCKS_PER_SEC<<"s"<<endl;
 	return 0;
